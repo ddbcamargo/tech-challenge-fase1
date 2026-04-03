@@ -97,31 +97,31 @@ Para avaliar os modelos, foram utilizadas:
 
 ### 🔹 KNN (com tuning)
 
-- Accuracy: **0.9561**
-- Recall: **0.9048**
-- F1-score: **0.9383**
+- Accuracy: **0.9298**
+- Recall: **0.8571**
+- F1-score: **0.9000**
 
 ---
 
 ### 🔹 Regressão Logística (com tuning)
 
-- Accuracy: **0.9649**
-- Recall: **0.9286**
-- F1-score: **0.9512**
+- Accuracy: **0.9474**
+- Recall: **0.8810**
+- F1-score: **0.9250**
 
 ---
 
 ### 🔹 Random Forest (com tuning)
 
 - Accuracy: **0.9649**
-- Recall: **0.9048**
-- F1-score: **0.9500**
+- Recall: **0.9286**
+- F1-score: **0.9630**
 
 ---
 
 ## 🧠 Análise dos resultados
 
-- Todos os modelos apresentaram alto desempenho (acima de 95% de accuracy)
+- Todos os modelos apresentaram alto desempenho (acima de 90% de accuracy)
 - A utilização de tuning permitiu encontrar configurações mais otimizadas
 - A **Regressão Logística apresentou o melhor recall**, sendo o fator decisivo
 
@@ -150,15 +150,6 @@ Motivos:
 - Dataset relativamente pequeno
 - Possível correlação entre variáveis
 - Modelo não substitui diagnóstico médico
-
----
-
-## 🧩 Possíveis melhorias
-
-- Uso de SHAP para explicabilidade
-- Feature engineering
-- Teste com outros algoritmos (XGBoost, SVM)
-- Otimização avançada (Random Search, Bayesian Optimization)
 
 ---
 
