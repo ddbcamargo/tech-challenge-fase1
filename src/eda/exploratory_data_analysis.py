@@ -1,10 +1,15 @@
-import os
+from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
 
-def load_data(file_path: str) -> pd.DataFrame:
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_PATH = BASE_DIR / "resources" / "data" / "breast_cancer.csv"
+GRAPHS_PATH = BASE_DIR / "resources" / "outputs" / "graphs" / "eda"
+
+
+def load_data(file_path: Path) -> pd.DataFrame:
     return pd.read_csv(file_path)
 
 
@@ -32,29 +37,31 @@ def show_basic_info(df: pd.DataFrame) -> None:
     print(df["diagnosis"].value_counts())
 
 
-def plot_target_distribution(df: pd.DataFrame, output_dir: str) -> None:
+def plot_target_distribution(df: pd.DataFrame, output_dir: Path) -> None:
     plt.figure(figsize=(8, 5))
     sns.countplot(x="diagnosis", data=df)
     plt.title("Distribuição do diagnóstico")
     plt.xlabel("Diagnóstico (0 = Benigno, 1 = Maligno)")
     plt.ylabel("Quantidade")
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "target_distribution.png"))
+    plt.savefig(output_dir / "target_distribution.png")
     plt.close()
 
 
-def plot_correlation_heatmap(df: pd.DataFrame, output_dir: str) -> None:
+def plot_correlation_heatmap(df: pd.DataFrame, output_dir: Path) -> None:
     plt.figure(figsize=(18, 12))
     sns.heatmap(df.corr(), cmap="coolwarm")
     plt.title("Mapa de Correlação")
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "correlation_heatmap.png"))
+    plt.savefig(output_dir / "correlation_heatmap.png")
     plt.close()
 
 
-def run_eda(data_path: str = "../resources/data/breast_cancer.csv",
-            output_dir: str = "../resources/outputs/graphs") -> pd.DataFrame:
-    os.makedirs(output_dir, exist_ok=True)
+def run_eda(
+    data_path: Path = DATA_PATH,
+    output_dir: Path = GRAPHS_PATH
+) -> pd.DataFrame:
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     df = load_data(data_path)
     df = clean_data(df)

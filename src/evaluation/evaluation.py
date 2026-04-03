@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 from typing import Any, Dict, List
 import matplotlib.pyplot as plt
@@ -5,7 +6,11 @@ import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
 
-def ensure_output_dir(output_dir: str = "../resources/outputs/graphs") -> None:
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+GRAPHS_PATH = BASE_DIR / "resources" / "outputs" / "graphs" / "evaluation"
+
+
+def ensure_output_dir(output_dir: Path = GRAPHS_PATH) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
 
@@ -13,7 +18,7 @@ def plot_confusion_matrix(
     y_test: Any,
     y_pred: Any,
     model_name: str,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> None:
     ensure_output_dir(output_dir)
 
@@ -44,7 +49,7 @@ def create_metrics_dataframe(results: List[Dict[str, Any]]) -> pd.DataFrame:
 
 def plot_metrics_comparison(
     metrics_df: pd.DataFrame,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> None:
     ensure_output_dir(output_dir)
 
@@ -71,7 +76,7 @@ def print_metrics_summary(metrics_df: pd.DataFrame) -> None:
 def run_evaluation(
     results: List[Dict[str, Any]],
     y_test: Any,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> pd.DataFrame:
     ensure_output_dir(output_dir)
 

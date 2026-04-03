@@ -1,12 +1,16 @@
+from pathlib import Path
 import os
 from typing import Any
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import shap
 
 
-def ensure_output_dir(output_dir: str = "../resources/outputs/graphs") -> None:
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+GRAPHS_PATH = BASE_DIR / "resources" / "outputs" / "graphs" / "explainability"
+
+
+def ensure_output_dir(output_dir: Path = GRAPHS_PATH) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
 
@@ -30,7 +34,7 @@ def get_shap_explanation(model: Any, x_data: pd.DataFrame):
 
 def plot_shap_summary_bar(
     explanation,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> None:
     ensure_output_dir(output_dir)
 
@@ -47,7 +51,7 @@ def plot_shap_summary_bar(
 
 def plot_shap_summary_beeswarm(
     explanation,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> None:
     ensure_output_dir(output_dir)
 
@@ -66,7 +70,7 @@ def run_shap(
     model: Any,
     x_data: Any,
     feature_names: list[str],
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ):
     x_df = convert_to_dataframe(x_data, feature_names)
     explanation = get_shap_explanation(model, x_df)

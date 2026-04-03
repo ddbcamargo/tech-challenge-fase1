@@ -1,4 +1,4 @@
-# 🧠 Breast Cancer Classification - Machine Learning Pipeline
+# 🧠 Breast Cancer Classification - Machine Learning
 
 ## ▶️ Como executar o projeto
 ### 🔹 1. Clonar o repositório
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 ### 🔹 4. Executar o pipeline
 ````bash
-python src/main.py
+python -m src.main
 ````
 
 ---

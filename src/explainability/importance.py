@@ -1,10 +1,15 @@
+from pathlib import Path
 import os
 from typing import Any
 import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def ensure_output_dir(output_dir: str = "../resources/outputs/graphs") -> None:
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+GRAPHS_PATH = BASE_DIR / "resources" / "outputs" / "graphs" / "explainability"
+
+
+def ensure_output_dir(output_dir: Path = GRAPHS_PATH) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
 
@@ -22,7 +27,7 @@ def create_feature_importance_dataframe(model: Any, feature_names: list[str]) ->
 def plot_feature_importance(
     importance_df: pd.DataFrame,
     top_n: int = 10,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> None:
     ensure_output_dir(output_dir)
 
@@ -47,7 +52,7 @@ def run_importance(
     model: Any,
     feature_names: list[str],
     top_n: int = 10,
-    output_dir: str = "../resources/outputs/graphs"
+    output_dir: Path = GRAPHS_PATH
 ) -> pd.DataFrame:
     importance_df = create_feature_importance_dataframe(model, feature_names)
     print_feature_importance(importance_df, top_n)
