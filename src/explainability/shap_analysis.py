@@ -43,21 +43,11 @@ class ShapAnalysis(Step):
 
         return pd.DataFrame(x_data, columns=list(x_data.columns))
 
-    def get_explanation(self, model: Any, x_df: pd.DataFrame) -> shap.Explanation:
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(x_df)
+    def get_explanation(self, model: Any, x_df: pd.DataFrame):
+        explainer = shap.Explainer(model, x_df)
+        explanation = explainer(x_df)
 
-        positive_class_index = list(model.classes_).index(1)
+        if len(explanation.values.shape) == 3:
+            explanation = explanation[:, :, 1]
 
-        if isinstance(shap_values, list):
-            selected_values = shap_values[positive_class_index]
-        elif len(shap_values.shape) == 3:
-            selected_values = shap_values[:, :, positive_class_index]
-        else:
-            selected_values = shap_values
-
-        return shap.Explanation(
-            values=selected_values,
-            data=x_df.values,
-            feature_names=x_df.columns.tolist()
-        )
+        return explanation

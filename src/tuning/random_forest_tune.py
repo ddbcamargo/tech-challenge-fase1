@@ -30,7 +30,7 @@ class RandomForestTune(Step):
     def execute(self, context: PipelineContext) -> PipelineContext:
         grid_search = self.create_grid_search()
         grid_search.fit(
-            context.data["x_train_scaled"],
+            context.data["x_train"],
             context.data["y_train"]
         )
 
