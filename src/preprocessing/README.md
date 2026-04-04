@@ -69,4 +69,4 @@ Após o pré-processamento, os dados estão devidamente separados, balanceados e
 ## Execução
 
 ```bash
-python src/main.py
+python -m src.main

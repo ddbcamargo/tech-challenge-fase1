@@ -122,4 +122,4 @@ Esses gráficos auxiliam na interpretação dos dados e na construção do relat
 ## ▶️ Execução
 
 ```bash
-python src/main.py
+python -m src.main

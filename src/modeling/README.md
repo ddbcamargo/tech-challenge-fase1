@@ -171,4 +171,4 @@ O modelo Random Forest se destacou como a melhor escolha, principalmente pela su
 ## ▶️ Execução
 
 ```bash
-python src/main.py
+python -m src.main

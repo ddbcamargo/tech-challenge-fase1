@@ -164,4 +164,4 @@ A Regressão Logística se destacou como a melhor escolha, principalmente pela s
 ## ▶️ Execução
 
 ```bash
-python src/main.py
+python -m src.main

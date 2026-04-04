@@ -105,4 +105,4 @@ Isso torna o modelo não apenas eficiente, mas também confiável e interpretáv
 ## ▶️ Execução
 
 ```bash
-python src/main.py
+python -m src.main
