@@ -3,9 +3,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from src.common.print_helper import PrintHelper
+from src.pipeline.pipeline_context import PipelineContext
+from src.pipeline.step import Step
 
 
-class Preprocessing:
+class Preprocessing(Step):
     def __init__(
         self,
         test_size: float = 0.2,
@@ -13,6 +15,27 @@ class Preprocessing:
     ) -> None:
         self.test_size = test_size
         self.random_state = random_state
+
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        x, y = self.split_features_target(context.df)
+        x_train, x_test, y_train, y_test = self.split_train_test(x, y)
+        x_train_scaled, x_test_scaled, scaler = self.scale_data(x_train, x_test)
+
+        context.data = {
+            "x": x,
+            "y": y,
+            "x_train": x_train,
+            "x_test": x_test,
+            "y_train": y_train,
+            "y_test": y_test,
+            "x_train_scaled": x_train_scaled,
+            "x_test_scaled": x_test_scaled,
+            "scaler": scaler
+        }
+
+        PrintHelper.show_shapes(context.data)
+
+        return context
 
     def split_features_target(
         self,
@@ -47,29 +70,3 @@ class Preprocessing:
         x_test_scaled = scaler.transform(x_test)
 
         return x_train_scaled, x_test_scaled, scaler
-
-    def run(self, df: pd.DataFrame) -> dict[str, Any]:
-        x, y = self.split_features_target(df)
-        x_train, x_test, y_train, y_test = self.split_train_test(x, y)
-        x_train_scaled, x_test_scaled, scaler = self.scale_data(x_train, x_test)
-
-        result = {
-            "x": x,
-            "y": y,
-            "x_train": x_train,
-            "x_test": x_test,
-            "y_train": y_train,
-            "y_test": y_test,
-            "x_train_scaled": x_train_scaled,
-            "x_test_scaled": x_test_scaled,
-            "scaler": scaler
-        }
-
-        PrintHelper.show_shapes(result)
-
-        return result
-
-
-def run_preprocessing(df: pd.DataFrame) -> dict[str, Any]:
-    preprocessing = Preprocessing()
-    return preprocessing.run(df)

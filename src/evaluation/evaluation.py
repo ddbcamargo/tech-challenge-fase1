@@ -3,15 +3,33 @@ from typing import Any
 import pandas as pd
 from src.common.print_helper import PrintHelper
 from src.common.plot_helper import PlotHelper
+from src.pipeline.pipeline_context import PipelineContext
+from src.pipeline.step import Step
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_OUTPUT_DIR = BASE_DIR / "resources" / "outputs" / "graphs" / "evaluation"
 
 
-class Evaluation:
+class Evaluation(Step):
     def __init__(self, output_dir: Path = DEFAULT_OUTPUT_DIR) -> None:
         self.output_dir = output_dir
+
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        PlotHelper.ensure_output_dir(self.output_dir)
+
+        results = context.modeling_results
+        y_test = context.data["y_test"]
+
+        self.plot_confusion_matrices(results, y_test)
+
+        metrics_df = self.create_metrics_dataframe(results)
+        PlotHelper.plot_metrics_comparison(metrics_df, self.output_dir)
+        PrintHelper.print_metrics_summary(metrics_df)
+
+        print(f"\nGráficos de avaliação salvos em: {self.output_dir}")
+
+        return context
 
     def create_metrics_dataframe(
         self,
@@ -43,25 +61,3 @@ class Evaluation:
                 model_name=result["model_name"],
                 output_dir=self.output_dir
             )
-
-    def run(
-        self,
-        results: list[dict[str, Any]],
-        y_test: Any
-    ) -> pd.DataFrame:
-        PlotHelper.ensure_output_dir(self.output_dir)
-
-        self.plot_confusion_matrices(results, y_test)
-
-        metrics_df = self.create_metrics_dataframe(results)
-        PlotHelper.plot_metrics_comparison(metrics_df, self.output_dir)
-        PrintHelper.print_metrics_summary(metrics_df)
-
-        print(f"\nGráficos de avaliação salvos em: {self.output_dir}")
-
-        return metrics_df
-
-
-def run_evaluation(results: list[dict[str, Any]], y_test: Any) -> pd.DataFrame:
-    evaluation = Evaluation()
-    return evaluation.run(results, y_test)

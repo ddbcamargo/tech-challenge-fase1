@@ -1,8 +1,8 @@
-from src.pipeline.machine_learning_pipeline import run_machine_learning_pipeline
+from src.pipeline.machine_learning_pipeline import MachineLearningPipeline
 
 
 def main() -> None:
-    run_machine_learning_pipeline()
+    MachineLearningPipeline().run()
 
     print("\n===== FIM =====")
 

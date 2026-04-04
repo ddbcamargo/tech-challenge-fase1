@@ -2,17 +2,29 @@ from typing import Any
 from sklearn.metrics import accuracy_score, classification_report, f1_score, recall_score
 from sklearn.neighbors import KNeighborsClassifier
 from src.common.print_helper import PrintHelper
+from src.pipeline.pipeline_context import PipelineContext
+from src.pipeline.step import Step
 
 
-class KNNModeling:
-    def __init__(self, model: KNeighborsClassifier) -> None:
-        self.model = model
+class KNNModeling(Step):
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        knn_tune = context.tuning_results["knn"]
+        data = context.data
 
-    def predict(self, x_test: Any) -> Any:
-        return self.model.predict(x_test)
+        knn_modeling_metrics = self.evaluate(
+            knn_tune["best_model"],
+            data["x_test_scaled"],
+            data["y_test"]
+        )
+        context.modeling_results.append(knn_modeling_metrics)
 
-    def evaluate(self, x_test: Any, y_test: Any) -> dict[str, Any]:
-        y_pred = self.predict(x_test)
+        return context
+
+    def predict(self, model: KNeighborsClassifier, x_test: Any) -> Any:
+        return model.predict(x_test)
+
+    def evaluate(self, model: KNeighborsClassifier, x_test: Any, y_test: Any) -> dict[str, Any]:
+        y_pred = self.predict(model, x_test)
 
         result = {
             "model_name": "KNN",
@@ -26,11 +38,3 @@ class KNNModeling:
         PrintHelper.show_metrics(result)
 
         return result
-
-    def run(self, x_test: Any, y_test: Any) -> dict[str, Any]:
-        return self.evaluate(x_test, y_test)
-
-
-def run_knn_modeling(model: KNeighborsClassifier, x_test: Any, y_test: Any) -> dict[str, Any]:
-    modeling = KNNModeling(model)
-    return modeling.run(x_test, y_test)

@@ -2,9 +2,11 @@ from typing import Any
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from src.common.print_helper import PrintHelper
+from src.pipeline.pipeline_context import PipelineContext
+from src.pipeline.step import Step
 
 
-class TuneKNN:
+class KNNTune(Step):
     def __init__(
         self,
         cv: int = 5,
@@ -21,6 +23,28 @@ class TuneKNN:
             "metric": ["cosine", "euclidean", "manhattan"]
         }
 
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        grid_search = self.create_grid_search()
+        grid_search.fit(
+            context.data["x_train_scaled"],
+            context.data["y_train"]
+        )
+
+        context.tuning_results["knn"] = {
+            "model_name": "knn",
+            "best_model": grid_search.best_estimator_,
+            "best_params": grid_search.best_params_,
+            "best_score": grid_search.best_score_
+        }
+
+        PrintHelper.show_best_result(
+            model_name=context.tuning_results["knn"]["model_name"],
+            best_params=context.tuning_results["knn"]["best_params"],
+            best_score=context.tuning_results["knn"]["best_score"]
+        )
+
+        return context
+
     def create_grid_search(self) -> GridSearchCV:
         return GridSearchCV(
             estimator=KNeighborsClassifier(),
@@ -29,27 +53,3 @@ class TuneKNN:
             scoring=self.scoring,
             n_jobs=self.n_jobs
         )
-
-    def run(self, x_train: Any, y_train: Any) -> dict[str, Any]:
-        grid_search = self.create_grid_search()
-        grid_search.fit(x_train, y_train)
-
-        result = {
-            "model_name": "knn",
-            "best_model": grid_search.best_estimator_,
-            "best_params": grid_search.best_params_,
-            "best_score": grid_search.best_score_
-        }
-
-        PrintHelper.show_best_result(
-            model_name=result["model_name"],
-            best_params=result["best_params"],
-            best_score=result["best_score"]
-        )
-
-        return result
-
-
-def run_knn_tune(x_train: Any, y_train: Any) -> dict[str, Any]:
-    tuner = TuneKNN()
-    return tuner.run(x_train, y_train)
