@@ -3,43 +3,26 @@ from typing import Any
 import pandas as pd
 import shap
 from src.common.plot_helper import PlotHelper
+from src.pipeline.pipeline_context import PipelineContext
+from src.pipeline.step import Step
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_OUTPUT_DIR = BASE_DIR / "resources" / "outputs" / "graphs" / "explainability"
 
 
-class ShapAnalysis:
+class ShapAnalysis(Step):
     def __init__(
         self,
-        model: Any,
-        x_data: Any,
-        feature_names: list[str],
         output_dir: Path = DEFAULT_OUTPUT_DIR
     ) -> None:
-        self.model = model
-        self.x_data = x_data
-        self.feature_names = feature_names
         self.output_dir = output_dir
 
-    def convert_to_dataframe(self) -> pd.DataFrame:
-        if isinstance(self.x_data, pd.DataFrame):
-            return self.x_data
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        x_df = self.convert_to_dataframe(context.data["x_train"])
+        model = context.tuning_results["random_forest"]["best_model"]
 
-        return pd.DataFrame(self.x_data, columns=self.feature_names)
-
-    def get_explanation(self, x_df: pd.DataFrame):
-        explainer = shap.Explainer(self.model, x_df)
-        explanation = explainer(x_df)
-
-        if len(explanation.values.shape) == 3:
-            explanation = explanation[:, :, 1]
-
-        return explanation
-
-    def run(self):
-        x_df = self.convert_to_dataframe()
-        explanation = self.get_explanation(x_df)
+        explanation = self.get_explanation(model, x_df)
 
         PlotHelper.plot_summary_bar(
             explanation=explanation,
@@ -52,17 +35,29 @@ class ShapAnalysis:
 
         print(f"\nGráficos SHAP salvos em: {self.output_dir}")
 
-        return explanation
+        return context
 
+    def convert_to_dataframe(self, x_data: Any) -> pd.DataFrame:
+        if isinstance(x_data, pd.DataFrame):
+            return x_data
 
-def run_shap_analysis(
-    model: Any,
-    x_data: Any,
-    feature_names: list[str]
-):
-    shap_analysis = ShapAnalysis(
-        model=model,
-        x_data=x_data,
-        feature_names=feature_names
-    )
-    return shap_analysis.run()
+        return pd.DataFrame(x_data, columns=list(x_data.columns))
+
+    def get_explanation(self, model: Any, x_df: pd.DataFrame) -> shap.Explanation:
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(x_df)
+
+        positive_class_index = list(model.classes_).index(1)
+
+        if isinstance(shap_values, list):
+            selected_values = shap_values[positive_class_index]
+        elif len(shap_values.shape) == 3:
+            selected_values = shap_values[:, :, positive_class_index]
+        else:
+            selected_values = shap_values
+
+        return shap.Explanation(
+            values=selected_values,
+            data=x_df.values,
+            feature_names=x_df.columns.tolist()
+        )

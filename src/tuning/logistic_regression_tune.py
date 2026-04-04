@@ -2,9 +2,11 @@ from typing import Any
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from src.common.print_helper import PrintHelper
+from src.pipeline.pipeline_context import PipelineContext
+from src.pipeline.step import Step
 
 
-class TuneLogisticRegression:
+class LogisticRegressionTune(Step):
     def __init__(
         self,
         cv: int = 5,
@@ -25,6 +27,28 @@ class TuneLogisticRegression:
             "C": [0.01, 0.1, 1, 10, 100]
         }
 
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        grid_search = self.create_grid_search()
+        grid_search.fit(
+            context.data["x_train_scaled"],
+            context.data["y_train"]
+        )
+
+        context.tuning_results["logistic_regression"] = {
+            "model_name": "logistic_regression",
+            "best_model": grid_search.best_estimator_,
+            "best_params": grid_search.best_params_,
+            "best_score": grid_search.best_score_
+        }
+
+        PrintHelper.show_best_result(
+            model_name=context.tuning_results["logistic_regression"]["model_name"],
+            best_params=context.tuning_results["logistic_regression"]["best_params"],
+            best_score=context.tuning_results["logistic_regression"]["best_score"]
+        )
+
+        return context
+
     def create_grid_search(self) -> GridSearchCV:
         return GridSearchCV(
             estimator=LogisticRegression(
@@ -36,27 +60,3 @@ class TuneLogisticRegression:
             scoring=self.scoring,
             n_jobs=self.n_jobs
         )
-
-    def run(self, x_train: Any, y_train: Any) -> dict[str, Any]:
-        grid_search = self.create_grid_search()
-        grid_search.fit(x_train, y_train)
-
-        result = {
-            "model_name": "logistic_regression",
-            "best_model": grid_search.best_estimator_,
-            "best_params": grid_search.best_params_,
-            "best_score": grid_search.best_score_
-        }
-
-        PrintHelper.show_best_result(
-            model_name=result["model_name"],
-            best_params=result["best_params"],
-            best_score=result["best_score"]
-        )
-
-        return result
-
-
-def run_logistic_regression_tune(x_train: Any, y_train: Any) -> dict[str, Any]:
-    tuner = TuneLogisticRegression()
-    return tuner.run(x_train, y_train)
