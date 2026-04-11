@@ -13,7 +13,7 @@ class RandomForestModeling(Step):
 
         random_forest_modeling_metrics = self.evaluate(
             random_forest_tune["best_model"],
-            data["x_test_scaled"],
+            data["x_test"],
             data["y_test"]
         )
         context.modeling_results.append(random_forest_modeling_metrics)
