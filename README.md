@@ -31,6 +31,79 @@ pip install -r requirements.txt
 python -m src.main
 ````
 
+### 🔹 5. API Flask + Swagger
+
+Uma API HTTP simples expõe o melhor modelo treinado para inferência:
+
+````bash
+python -m src.main --mode api
+# ou: python -m src.api.app
+````
+
+| Método | Rota            | Descrição                                    |
+| ------ | --------------- | -------------------------------------------- |
+| GET    | `/`             | Redireciona para o Swagger UI                |
+| GET    | `/apidocs/`     | **Swagger UI** (documentação interativa)     |
+| GET    | `/apispec.json` | Spec OpenAPI 2.0 em JSON                     |
+| GET    | `/health`       | Health check + info do modelo carregado      |
+| POST   | `/predict`      | Predição binária (benigno/maligno) + prob.   |
+
+#### Exemplo de uso
+
+Request body em `POST /predict`:
+
+```json
+{
+  "radius_mean": 14.2,
+  "texture_mean": 20.1,
+  "perimeter_mean": 92.0,
+  "area_mean": 654.0,
+  "smoothness_mean": 0.09,
+  "compactness_mean": 0.1,
+  "concavity_mean": 0.08,
+  "concave_points_mean": 0.04,
+  "symmetry_mean": 0.18,
+  "fractal_dimension_mean": 0.06,
+  "radius_se": 0.5,
+  "texture_se": 1.2,
+  "perimeter_se": 3.5,
+  "area_se": 40.0,
+  "smoothness_se": 0.007,
+  "compactness_se": 0.02,
+  "concavity_se": 0.03,
+  "concave_points_se": 0.01,
+  "symmetry_se": 0.02,
+  "fractal_dimension_se": 0.003,
+  "radius_worst": 16.5,
+  "texture_worst": 25.0,
+  "perimeter_worst": 110.0,
+  "area_worst": 880.0,
+  "smoothness_worst": 0.13,
+  "compactness_worst": 0.22,
+  "concavity_worst": 0.25,
+  "concave_points_worst": 0.12,
+  "symmetry_worst": 0.28,
+  "fractal_dimension_worst": 0.09
+}
+```
+
+Response:
+
+```json
+{
+  "prediction": 1,
+  "label": "maligno",
+  "probability": 0.93,
+  "model": "random_forest"
+}
+```
+
+A forma mais fácil de testar é abrir
+[http://localhost:5000/apidocs/](http://localhost:5000/apidocs/) e usar
+o botão *Try it out* — o Swagger UI já vem com o payload acima
+preenchido.
+
+
 ---
 
 ## 📌 Visão Geral
@@ -55,12 +128,17 @@ Desenvolver um modelo de classificação capaz de:
 
 ```bash
 src/
-├── eda/
-├── preprocessing/
-├── modeling/
-├── tuning/
-├── evaluation/
-├── explainability/
+├── ml/
+│   ├── eda/
+│   ├── preprocessing/
+│   ├── modeling/
+│   ├── tuning/
+│   ├── evaluation/
+│   ├── explainability/
+│   ├── pipeline/
+│   └── inference/
+├── api/
+├── shared/
 └── main.py
 ```
 
@@ -69,7 +147,7 @@ src/
 - Distribuição da variável target
 - Identificação de padrões e correlações
 
-👉 Mais detalhes em [README.md](src/eda/README.md)
+👉 Mais detalhes em [README.md](src/ml/eda/README.md)
 
 #### 🔹 Preprocessing
 - Limpeza de dados
@@ -77,7 +155,7 @@ src/
 - Separação entre treino e teste (80/20)
 - Normalização com StandardScaler
 
-👉 Mais detalhes em [README.md](src/preprocessing/README.md)
+👉 Mais detalhes em [README.md](src/ml/preprocessing/README.md)
 
 #### 🔹 Modeling
 Modelos treinados:
@@ -85,14 +163,14 @@ Modelos treinados:
 - Regressão Logística
 - Random Forest
 
-👉 Mais detalhes em [README.md](src/modeling/README.md)
+👉 Mais detalhes em [README.md](src/ml/modeling/README.md)
 
 #### 🔹 Tuning
 Ajuste de hiperparâmetros com:
 - GridSearchCV
 - Validação cruzada (cross-validation)
 
-👉 Mais detalhes em [README.md](src/tuning/README.md)
+👉 Mais detalhes em [README.md](src/ml/tuning/README.md)
 
 #### 🔹 Evaluation
 Métricas utilizadas:
@@ -101,13 +179,13 @@ Métricas utilizadas:
 - F1-score
 - Classification Report
 
-👉 Mais detalhes em [README.md](src/evaluation/README.md)
+👉 Mais detalhes em [README.md](src/ml/evaluation/README.md)
 
 #### 🔹 Explainability
 - Importance (Random Forest)
 - SHAP (interpretação avançada do modelo)
 
-👉 Mais detalhes em [README.md](src/explainability/README.md)
+👉 Mais detalhes em [README.md](src/ml/explainability/README.md)
 
 ---
 
@@ -184,17 +262,20 @@ Incluindo:
 - Scikit-learn
 - Matplotlib / Seaborn
 - SHAP
+- Flask (API de inferência)
+- Flasgger (Swagger UI)
+- Joblib (persistência de modelo e scaler)
 
 ---
 
 ## 📚 Documentação
 
-- [EDA](src/eda/README.md)
-- [Preprocessing](src/preprocessing/README.md)
-- [Modeling](src/modeling/README.md)
-- [Tuning](src/tuning/README.md)
-- [Evaluation](src/evaluation/README.md)
-- [Explainability](src/explainability/README.md)
+- [EDA](src/ml/eda/README.md)
+- [Preprocessing](src/ml/preprocessing/README.md)
+- [Modeling](src/ml/modeling/README.md)
+- [Tuning](src/ml/tuning/README.md)
+- [Evaluation](src/ml/evaluation/README.md)
+- [Explainability](src/ml/explainability/README.md)
 ---
 
 ## 📌 Conclusão
