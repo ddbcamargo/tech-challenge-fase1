@@ -187,6 +187,20 @@ Métricas utilizadas:
 
 👉 Mais detalhes em [README.md](src/ml/explainability/README.md)
 
+#### 🔹 Pipeline
+- Orquestração das etapas (EDA → Preprocessing → Tuning → Modeling → Evaluation → Explainability → Inference)
+- `Step` (contrato abstrato) + `PipelineContext` (estado compartilhado)
+- `MachineLearningPipeline` como executor principal
+
+👉 Mais detalhes em [README.md](src/ml/pipeline/README.md)
+
+#### 🔹 Inference
+- Seleção do melhor modelo (recall → f1 → accuracy)
+- Persistência de `best_model.joblib`, `scaler.joblib` e `best_model_info.json`
+- `MLPredictor`: classe consumida pela API Flask
+
+👉 Mais detalhes em [README.md](src/ml/inference/README.md)
+
 ---
 
 ## 📊 Problema de Classificação
@@ -276,6 +290,8 @@ Incluindo:
 - [Tuning](src/ml/tuning/README.md)
 - [Evaluation](src/ml/evaluation/README.md)
 - [Explainability](src/ml/explainability/README.md)
+- [Pipeline](src/ml/pipeline/README.md)
+- [Inference](src/ml/inference/README.md)
 ---
 
 ## 📌 Conclusão
