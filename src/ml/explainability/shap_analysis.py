@@ -1,0 +1,51 @@
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
+import shap
+
+from src.ml.pipeline.pipeline_context import PipelineContext
+from src.ml.pipeline.step import Step
+from src.shared.config.paths import EXPLAINABILITY_GRAPHS_DIR
+from src.shared.utils.plot_helper import PlotHelper
+
+
+class ShapAnalysis(Step):
+    def __init__(
+        self,
+        output_dir: Path = EXPLAINABILITY_GRAPHS_DIR,
+    ) -> None:
+        self.output_dir = output_dir
+
+    def execute(self, context: PipelineContext) -> PipelineContext:
+        x_df = self.convert_to_dataframe(context.data["x_train"])
+        model = context.tuning_results["random_forest"]["best_model"]
+
+        explanation = self.get_explanation(model, x_df)
+
+        PlotHelper.plot_summary_bar(
+            explanation=explanation,
+            output_dir=self.output_dir,
+        )
+        PlotHelper.plot_summary_beeswarm(
+            explanation=explanation,
+            output_dir=self.output_dir,
+        )
+
+        print(f"\nGráficos SHAP salvos em: {self.output_dir}")
+
+        return context
+
+    def convert_to_dataframe(self, x_data: Any) -> pd.DataFrame:
+        if isinstance(x_data, pd.DataFrame):
+            return x_data
+        return pd.DataFrame(x_data, columns=list(x_data.columns))
+
+    def get_explanation(self, model: Any, x_df: pd.DataFrame):
+        explainer = shap.Explainer(model, x_df)
+        explanation = explainer(x_df)
+
+        if len(explanation.values.shape) == 3:
+            explanation = explanation[:, :, 1]
+
+        return explanation
