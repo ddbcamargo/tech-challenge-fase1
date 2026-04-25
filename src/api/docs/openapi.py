@@ -1,11 +1,3 @@
-"""Spec OpenAPI 2.0 (Swagger) usada pelo Flasgger.
-
-Mantida como dicionário Python (em vez de YAML) para reaproveitar a lista
-oficial de features definida em :mod:`src.shared.constants.features`,
-evitando duplicação entre código e documentação.
-"""
-from __future__ import annotations
-
 from typing import Any
 
 from src.shared.constants.features import API_TO_DATASET_FEATURE

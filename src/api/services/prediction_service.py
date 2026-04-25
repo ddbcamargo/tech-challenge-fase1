@@ -1,10 +1,3 @@
-"""Serviço de inferência consumido pelas rotas da API.
-
-Implementa cache lazy do ``MLPredictor`` para que o modelo e o scaler
-sejam carregados apenas uma vez por processo.
-"""
-from __future__ import annotations
-
 from typing import Any
 
 from src.ml.inference.predictor import MLPredictor

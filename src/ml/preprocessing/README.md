@@ -1,12 +1,12 @@
-# Pré-processamento dos Dados
+# 📐 Pré-processamento dos Dados
 
-## Objetivo
+## 🎯 Objetivo
 
 A etapa de pré-processamento tem como objetivo preparar os dados para a modelagem, garantindo que estejam organizados e em formato adequado para os algoritmos de Machine Learning.
 
 ---
 
-## Etapas realizadas
+## 🧱 Etapas realizadas
 
 ### 1. Separação entre variáveis de entrada e variável alvo
 
@@ -44,7 +44,7 @@ Essa etapa é importante principalmente para algoritmos sensíveis à escala dos
 
 ---
 
-## Saídas geradas
+## 📊 Saídas geradas
 
 A etapa de pré-processamento retorna:
 
@@ -60,13 +60,13 @@ A etapa de pré-processamento retorna:
 
 ---
 
-## Conclusão
+## 📌 Conclusão
 
 Após o pré-processamento, os dados estão devidamente separados, balanceados entre treino e teste e normalizados para uso nos modelos de classificação.
 
 ---
 
-## Execução
+## ▶️ Execução
 
 ```bash
 python -m src.main

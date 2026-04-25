@@ -1,9 +1,3 @@
-"""Validação do payload JSON da rota ``/predict``.
-
-Mantido em puro Python para evitar dependência extra (pydantic).
-"""
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any
 

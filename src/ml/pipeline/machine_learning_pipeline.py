@@ -32,9 +32,6 @@ class MachineLearningPipeline:
             Evaluation(),
             ShapAnalysis(),
 
-            # Seleciona o melhor modelo com base nas métricas e persiste
-            # artefatos (modelo, scaler, metadados) em models/ml/ para que
-            # a API de inferência consiga carregar sem acoplar-se ao treino.
             PersistBestModel(),
         ]
 
