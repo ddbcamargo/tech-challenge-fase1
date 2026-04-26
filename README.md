@@ -26,19 +26,37 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ````
 
-### 🔹 4. Executar o pipeline
+### 🔹 4. Executar o projeto
+
+O entrypoint aceita três formas de execução:
+
+| Comando                              | Comportamento                                                   |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `python -m src.main`                 | Executa **ML + API em sequência** (treina e já sobe a API)      |
+| `python -m src.main --mode ml`       | Executa **apenas o pipeline de Machine Learning** (treino)      |
+| `python -m src.main --mode api`      | Sobe **apenas a API Flask** (usa os artefatos já treinados)     |
+
+#### Exemplos
+
 ````bash
+# Treina o modelo e sobe a API logo em seguida (default)
 python -m src.main
+
+# Apenas treina (gera best_model.joblib, scaler.joblib, best_model_info.json)
+python -m src.main --mode ml
+
+# Apenas sobe a API Flask em http://localhost:5000
+python -m src.main --mode api
 ````
+
+> **Observação:** o modo `--mode api` exige que o pipeline de ML já tenha sido
+> executado pelo menos uma vez (para que os artefatos em `models/ml/` existam).
+> Em uma máquina nova, prefira rodar `python -m src.main` (sem flag) na
+> primeira execução.
 
 ### 🔹 5. API Flask + Swagger
 
-Uma API HTTP simples expõe o melhor modelo treinado para inferência:
-
-````bash
-python -m src.main --mode api
-# ou: python -m src.api.app
-````
+A API HTTP expõe o melhor modelo treinado para inferência:
 
 | Método | Rota            | Descrição                                    |
 | ------ | --------------- | -------------------------------------------- |

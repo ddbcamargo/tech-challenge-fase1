@@ -11,6 +11,7 @@ def run_ml() -> None:
 def run_api() -> None:
     from src.api.app import app
 
+    print("\n===== INICIANDO API =====")
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
@@ -19,8 +20,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mode",
         choices=["ml", "api"],
-        default="",
-        help="Qual fluxo executar: treino (ml) ou API (api).",
+        default=None,
+        help=(
+            "Qual fluxo executar: 'ml' (apenas treino), 'api' (apenas API) "
+            "ou omita para executar ambos em sequencia (ml + api)."
+        ),
     )
     return parser.parse_args()
 
@@ -35,6 +39,7 @@ def main() -> None:
     else:
         run_ml()
         run_api()
+
 
 if __name__ == "__main__":
     main()
